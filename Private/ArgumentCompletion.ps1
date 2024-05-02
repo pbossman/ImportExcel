@@ -67,7 +67,11 @@ function WorksheetArgumentCompleter {
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
     $xlPath = $fakeBoundParameter['Path']
     if (Test-Path -Path $xlPath) {
-        $xlpkg = Open-ExcelPackage -ReadOnly -Path $xlPath
+        Try {
+            $xlpkg = Open-ExcelPackage -ReadOnly -Path $xlPath
+        } catch {
+            Write-Host "Caught Error" -ForegroundColor Yellow
+        }
         $WorksheetNames = $xlPkg.Workbook.Worksheets.Name
         Close-ExcelPackage -nosave -ExcelPackage $xlpkg
         $WorksheetNames.where( { $_ -like "*$wordToComplete*" }) | foreach-object {
